@@ -1,6 +1,7 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { DietPlanDTO } from './dto';
 import { Configuration, OpenAIApi } from 'openai';
+import { Logger } from '@nestjs/common';
 
 const configuration = new Configuration({
   apiKey: process.env.OPEN_AI_KEY,
@@ -13,7 +14,9 @@ export class OpenAIService {
   constructor() {}
 
   async generateDietPlan(data: DietPlanDTO): Promise<any> {
+    Logger.log('Started Requests');
     const prompt = this.constructPrompt(data);
+    Logger.log('Constructed Prompt: ', prompt);
 
     try {
       const completion = await openai.createCompletion({
