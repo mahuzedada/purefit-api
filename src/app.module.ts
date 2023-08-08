@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { OpenAIService } from './openai.service';
 import { ConfigModule } from '@nestjs/config';
+import 'dotenv/config';
 
 @Module({
   imports: [ConfigModule.forRoot()],
