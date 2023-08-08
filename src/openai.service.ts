@@ -1,17 +1,15 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import axios, { AxiosResponse } from 'axios';
 import { DietPlanDTO } from './dto';
 import { Configuration, OpenAIApi } from 'openai';
 
 const configuration = new Configuration({
-  apiKey: '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',
+  apiKey: '',
 });
+
 const openai = new OpenAIApi(configuration);
 
 @Injectable()
 export class OpenAIService {
-  private OPENAI_API_URL = 'https://api.openai.com/v1/engines/davinci';
-
   constructor() {}
 
   async generateDietPlan(data: DietPlanDTO): Promise<any> {
@@ -24,13 +22,24 @@ export class OpenAIService {
         temperature: 0.6,
         max_tokens: 2048,
       });
-      return completion.data.choices[0].text.trim();
+      const json = this.removeMarkdownFence(
+        completion.data.choices[0].text.trim(),
+      );
+      return JSON.parse(json);
     } catch (error) {
       throw new HttpException(
         'Failed to get a response from OpenAI.',
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  removeMarkdownFence(inputString) {
+    // Create a regular expression to match the markdown code fence
+    const regex = /```json\n|```/g;
+
+    // Replace all occurrences of the code fence with an empty string
+    return inputString.replace(regex, '');
   }
 
   constructPrompt(data: any): string {
