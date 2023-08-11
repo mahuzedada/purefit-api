@@ -3,9 +3,10 @@ import { CreateMealPlanDTO } from './dto';
 import { Configuration, OpenAIApi } from 'openai';
 import { Logger } from '@nestjs/common';
 import { EmailService } from './email.service';
+import env from '../env';
 
 const configuration = new Configuration({
-  apiKey: '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',
+  apiKey: env.openAiKey,
 });
 
 const openai = new OpenAIApi(configuration);
