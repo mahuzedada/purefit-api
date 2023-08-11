@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { DietPlanDTO } from './dto';
+import { CreateMealPlanDTO } from './dto';
 import { Configuration, OpenAIApi } from 'openai';
 import { Logger } from '@nestjs/common';
-import env from '../env';
+import { EmailService } from './email.service';
 
 const configuration = new Configuration({
-  apiKey: env.openAiKey,
+  apiKey: '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',
 });
 
 const openai = new OpenAIApi(configuration);
 
 @Injectable()
-export class OpenAIService {
-  constructor() {}
+export class PlanService {
+  constructor(private email: EmailService) {}
 
-  async generateDietPlan(data: DietPlanDTO): Promise<any> {
+  async generateDietPlan(data: CreateMealPlanDTO): Promise<any> {
     Logger.log('Started Requests');
     const prompt = this.constructPrompt(data);
     Logger.log('Constructed Prompt: ', prompt);
@@ -26,7 +26,13 @@ export class OpenAIService {
         temperature: 0,
         max_tokens: 3000,
       });
-      return JSON.parse(completion.data.choices[0].text.trim());
+      const res = completion.data.choices[0].text.trim();
+      await this.email.sendEmail(
+        'chatis@afrointelligence.com',
+        'Your Personalised Meal Plan',
+        res,
+      );
+      return JSON.parse(res);
     } catch (error) {
       throw error;
     }
@@ -63,60 +69,22 @@ Using the provided user profile:
   }
 }
 
-Based on the given profile and dietary rules, generate customized meal ideas.
-
-For each meal idea, you will generate a title and a description. Use a instruction tone in the style of a 5* restaurant to generate the title and the description.
-
-You will generate accurate nutrition_information according to the JSON format bellow.
-
-Make sure all the information you generate is accurate. DO NOT make anything up!
-
-Return the meal suggestions in the following JSON format:
-
-{
-  "breakfast_idea": {
-    "title": "",
-    "description": "",
-    "nutrition_information": {
-      "calories_per_serving": "",
-      "protein_content": "",
-      "fat_content": "",
-      "sugar_content": ""
-    }
-  },
-  "lunch_idea": {
-    "title": "",
-    "description": "",
-    "nutrition_information": {
-      "calories_per_serving": "",
-      "protein_content": "",
-      "fat_content": "",
-      "sugar_content": ""
-    }
-  },
-  "dinner_idea": {
-    "title": "",
-    "description": "",
-    "nutrition_information": {
-      "calories_per_serving": "",
-      "protein_content": "",
-      "fat_content": "",
-      "sugar_content": ""
-    }
-  },
-  "snack_idea": {
-    "title": "",
-    "description": "",
-    "nutrition_information": {
-      "calories_per_serving": "",
-      "protein_content": "",
-      "fat_content": "",
-      "sugar_content": ""
-    }
-  }
-}
+Based on the given profile and dietary rules, generate customized meal plan. the length of the plan is: "${user_info.timeframe}".
 
 Ensure meals are simple to prepare, delightful, and STRICTLY adhere to the given constraints.
+
+Generate the output in a way that it can be directly passed to a PDF generator to create a beautiful, well-structured document.
+
+
+include the following in your output
+Summary: summary of how this plan will help the user achieve their weigh goal. mention the goal.
+For each meal: create a title, description, step by step instruction on how to cook it, and a nutrition section:
+              "calories_per_serving": "",
+              "protein_content": "",
+              "fat_content": "",
+              "sugar_content": ""
+              
+Make SURE you generate enough meals to cover the user's time frame : "${user_info.timeframe}"
 `;
   }
 }

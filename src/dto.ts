@@ -29,3 +29,9 @@ export interface DietPlanDTO {
   user_info: UserInfo;
   diet_rules: DietRules;
 }
+
+export class CreateMealPlanDTO {
+  email: string;
+  user_info: UserInfo;
+  diet_rules: DietRules;
+}

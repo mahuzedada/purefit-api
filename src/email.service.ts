@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import * as PDFKit from 'pdfkit';
+import env from '../env';
 
 @Injectable()
 export class EmailService {
@@ -11,10 +12,7 @@ export class EmailService {
       host: 'email-smtp.us-east-2.amazonaws.com',
       port: 465,
       secure: true, // true for 465, false for other ports
-      auth: {
-        user: 'AKIA2ELD3VL2VJSJMQ67',
-        pass: 'BDBMjPovYWZAmIL4m60jkN+vO8UIqozdRjP7Y8ImN5D+',
-      },
+      auth: env.email,
     });
   }
 
