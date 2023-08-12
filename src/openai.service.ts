@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DietPlanDTO } from './dto';
 import { Configuration, OpenAIApi } from 'openai';
 import { Logger } from '@nestjs/common';
-import env from '../env';
+import env from './env';
 
 const configuration = new Configuration({
   apiKey: env.openAiKey,

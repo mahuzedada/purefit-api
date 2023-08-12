@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import * as PDFKit from 'pdfkit';
-import env from '../env';
+import env from './env';
 
 @Injectable()
 export class EmailService {

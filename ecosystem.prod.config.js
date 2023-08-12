@@ -16,7 +16,7 @@ module.exports = {
     production: {
       ...options,
       host: 'ec2-3-138-125-138.us-east-2.compute.amazonaws.com',
-      ref: 'origin/master',
+      ref: 'origin/main',
       'post-deploy': `${options['post-deploy']} && pm2 reload ecosystem.prod.config.js`,
       path: join(appsDirectoryPath, appName),
     },
