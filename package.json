@@ -28,6 +28,7 @@
     "@nestjs/config": "^3.0.0",
     "@nestjs/core": "^10.0.0",
     "@nestjs/platform-express": "^10.1.3",
+    "@supabase/supabase-js": "^2.32.0",
     "@vendia/serverless-express": "^4.10.4",
     "aws-lambda": "^1.0.7",
     "axios": "^1.4.0",

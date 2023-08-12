@@ -4,6 +4,7 @@ import { Configuration, OpenAIApi } from 'openai';
 import { Logger } from '@nestjs/common';
 import { EmailService } from './email.service';
 import env from './env';
+import { supabase } from './database';
 
 const configuration = new Configuration({
   apiKey: env.openAiKey,
@@ -16,27 +17,41 @@ export class PlanService {
   constructor(private email: EmailService) {}
 
   async generateDietPlan(data: CreateMealPlanDTO): Promise<any> {
-    Logger.log('Started Requests');
-    const prompt = this.constructPrompt(data);
-    Logger.log('Constructed Prompt: ', prompt);
+    // Respond immediately
+    setImmediate(async () => {
+      // Save email in DB
+      try {
+        await supabase.from('Emails').insert({ value: data.email });
+        Logger.log('Saved New Email', 'SUPABASE');
+      } catch (e) {
+        Logger.log(e);
+      }
 
-    try {
-      const completion = await openai.createCompletion({
-        model: 'text-davinci-003',
-        prompt,
-        temperature: 0,
-        max_tokens: 3000,
-      });
-      const res = completion.data.choices[0].text.trim();
-      await this.email.sendEmail(
-        data.email,
-        'Your Personalised Meal Plan',
-        res,
-      );
-      return JSON.parse(res);
-    } catch (error) {
-      throw error;
-    }
+      // Request to OpenAI
+      Logger.log('Started Requests To Open-AI');
+      const prompt = this.constructPrompt(data);
+      Logger.log('Constructed Prompt: ', prompt);
+
+      try {
+        const completion = await openai.createCompletion({
+          model: 'text-davinci-003',
+          prompt,
+          temperature: 0,
+          max_tokens: 3000,
+        });
+        const res = completion.data.choices[0].text.trim();
+        await this.email.sendEmail(
+          data.email,
+          'Your Personalised Meal Plan',
+          res,
+        );
+        Logger.log('Sent Personalised Meal Plan');
+      } catch (error) {
+        Logger.log(error);
+      }
+    });
+
+    return { message: 'Request received, processing...' };
   }
 
   constructPrompt(data: any): string {
