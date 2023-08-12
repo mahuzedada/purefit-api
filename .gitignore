@@ -38,5 +38,5 @@ lerna-debug.log*
 .env
 .env.prop
 
-env.ts
+/src/env.ts
 
