@@ -5,11 +5,11 @@ module.exports = {
   apps: [
     {
       name: appName,
-      script: './dist/main.js',
+      script: './dist/src/main.js',
       env: {
-        NODE_ENV: 'development'
-      }
-    }
+        NODE_ENV: 'development',
+      },
+    },
   ],
 
   deploy: {
@@ -18,7 +18,7 @@ module.exports = {
       host: 'procamp-dev',
       ref: 'origin/main',
       'post-deploy': `${options['post-deploy']} && pm2 reload ecosystem.dev.config.js`,
-      path: join(appsDirectoryPath, appName)
-    }
-  }
+      path: join(appsDirectoryPath, appName),
+    },
+  },
 };
