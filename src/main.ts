@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors({ origin: 'https://ai.purefit.club' });
+  app.enableCors(); // This will enable CORS for all origins by default
   await app.listen(4089);
 }
 bootstrap();
