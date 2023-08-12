@@ -29,7 +29,7 @@ export class PlanService {
       });
       const res = completion.data.choices[0].text.trim();
       await this.email.sendEmail(
-        'chatis@afrointelligence.com',
+        data.email,
         'Your Personalised Meal Plan',
         res,
       );

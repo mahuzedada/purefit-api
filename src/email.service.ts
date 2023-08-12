@@ -9,9 +9,9 @@ export class EmailService {
 
   constructor() {
     this.transporter = nodemailer.createTransport({
-      host: 'email-smtp.us-east-2.amazonaws.com',
-      port: 465,
-      secure: true, // true for 465, false for other ports
+      host: 'smtp.office365.com',
+      port: 587,
+      secure: false, // true for 465, false for other ports
       auth: env.email,
     });
   }
@@ -41,13 +41,13 @@ export class EmailService {
     const pdfBuffer = await this.generatePDF(text);
 
     const mailOptions = {
-      from: 'chatis@afrointelligence.com', // sender address
-      to: to, // list of receivers
-      subject: subject, // Subject line
-      text: 'Please find the attached PDF.', // plain text body
+      from: 'admin@procamp.dev',
+      to: to,
+      subject: subject,
+      text: 'Please find the attached PDF.',
       attachments: [
         {
-          filename: 'attachment.pdf',
+          filename: 'MealPlan.pdf',
           content: pdfBuffer,
         },
       ],
