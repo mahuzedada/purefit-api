@@ -35,3 +35,14 @@ export class CreateMealPlanDTO {
   user_info: UserInfo;
   diet_rules: DietRules;
 }
+
+export interface GenerateDocsDTO {
+  ide_selection: string[];
+  languages_used: string[];
+  frameworks_used: string[];
+  doc_preference: string;
+  preferred_doc_platforms: string[];
+  search_first_choice: string;
+  frequent_coding_concepts: string[];
+  recent_queries: string[];
+}
