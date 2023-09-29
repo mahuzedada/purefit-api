@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { GenerateDocsDTO } from './dto';
-import { Configuration, OpenAIApi } from 'openai';
+import OpenAI from 'openai';
 import { Logger } from '@nestjs/common';
 import env from './env';
 
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: env.openAiKey,
 });
-
-const openai = new OpenAIApi(configuration);
 
 @Injectable()
 export class DocsService {
@@ -20,13 +18,13 @@ export class DocsService {
     Logger.log('Constructed Prompt: ', prompt);
 
     try {
-      const completion = await openai.createCompletion({
-        model: 'text-davinci-003',
-        prompt,
+      const completion = await openai.chat.completions.create({
+        model: 'gpt-4',
+        messages: [{ content: prompt, role: 'user' }],
         temperature: 0,
         max_tokens: 3000,
       });
-      return completion.data.choices[0].text.trim();
+      return completion.choices[0].message.content.trim();
     } catch (error) {
       throw error;
     }

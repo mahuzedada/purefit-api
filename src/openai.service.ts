@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { DietPlanDTO } from './dto';
-import { Configuration, OpenAIApi } from 'openai';
+import OpenAI from 'openai';
 import { Logger } from '@nestjs/common';
 import env from './env';
 
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: env.openAiKey,
 });
-
-const openai = new OpenAIApi(configuration);
 
 @Injectable()
 export class OpenAIService {
@@ -17,16 +15,16 @@ export class OpenAIService {
   async generateDietPlan(data: DietPlanDTO): Promise<any> {
     Logger.log('Started Requests');
     const prompt = this.constructPrompt(data);
-    Logger.log('Constructed Prompt: ', prompt);
+    // Logger.log('Constructed Prompt: ', prompt);
 
     try {
-      const completion = await openai.createCompletion({
-        model: 'text-davinci-003',
-        prompt,
+      const completion = await openai.chat.completions.create({
+        model: 'gpt-4',
+        messages: [{ content: prompt, role: 'user' }],
         temperature: 0,
         max_tokens: 3000,
       });
-      return JSON.parse(completion.data.choices[0].text.trim());
+      return JSON.parse(completion.choices[0].message.content.trim());
     } catch (error) {
       throw error;
     }
@@ -73,6 +71,7 @@ Make sure all the information you generate is accurate. DO NOT make anything up!
 
 Return the meal suggestions in the following JSON format:
 
+If the user wants to loose or gain weight, make sure your meal suggestion have the daily calories deficit or surplus to reach the goal in the time frame provided by the user.
 {
   "breakfast_idea": {
     "title": "",
@@ -113,7 +112,11 @@ Return the meal suggestions in the following JSON format:
       "fat_content": "",
       "sugar_content": ""
     }
-  }
+  },
+  "prediction_of_daily_calories_burn_based_on_user_life_style": "",
+  "total_calories_per_day_from_all_suggested_meals": "",
+  "total_calories_deficit_needed_per_day": "",
+  "total_calories_surplus_needed_per_day": "",
 }
 
 Ensure meals are simple to prepare, delightful, and STRICTLY adhere to the given constraints.

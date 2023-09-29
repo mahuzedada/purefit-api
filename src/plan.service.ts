@@ -1,16 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { CreateMealPlanDTO } from './dto';
-import { Configuration, OpenAIApi } from 'openai';
+import OpenAI from 'openai';
 import { Logger } from '@nestjs/common';
 import { EmailService } from './email.service';
 import env from './env';
 import { supabase } from './database';
 
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: env.openAiKey,
 });
-
-const openai = new OpenAIApi(configuration);
 
 @Injectable()
 export class PlanService {
@@ -33,13 +31,13 @@ export class PlanService {
       Logger.log('Constructed Prompt: ', prompt);
 
       try {
-        const completion = await openai.createCompletion({
-          model: 'text-davinci-003',
-          prompt,
+        const completion = await openai.chat.completions.create({
+          model: 'gpt-4',
+          messages: [{ content: prompt, role: 'user' }],
           temperature: 0,
           max_tokens: 3000,
         });
-        const res = completion.data.choices[0].text.trim();
+        const res = completion.choices[0].message.content.trim();
         await this.email.sendEmail(
           data.email,
           'Your Personalised Meal Plan',
