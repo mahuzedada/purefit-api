@@ -41,7 +41,7 @@ export class AppController {
   async generateCoverLetter(@Body() data: any): Promise<string> {
     return this.docsService.generateCoverLetter(data);
   }
-  @Post('/skill-gap')
+  @Post('/skill-gap-analysis')
   async generateSkillGap(
     @Body() data: CandidateAndJobInfoDto,
   ): Promise<string> {
