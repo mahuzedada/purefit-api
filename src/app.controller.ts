@@ -1,7 +1,12 @@
 import { Controller, Post, Body, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 import { OpenAIService } from './openai.service';
-import { CreateMealPlanDTO, DietPlanDTO, GenerateDocsDTO } from './dto';
+import {
+  CandidateAndJobInfoDto,
+  CreateMealPlanDTO,
+  DietPlanDTO,
+  GenerateDocsDTO,
+} from './dto';
 import { EmailService } from './email.service';
 import { PlanService } from './plan.service';
 import { DocsService } from './docs.service';
@@ -31,5 +36,15 @@ export class AppController {
   @Post('/docs')
   async generateDocs(@Body() data: GenerateDocsDTO): Promise<string> {
     return this.docsService.generateDocs(data);
+  }
+  @Post('/cover-letter')
+  async generateCoverLetter(@Body() data: any): Promise<string> {
+    return this.docsService.generateCoverLetter(data);
+  }
+  @Post('/skill-gap')
+  async generateSkillGap(
+    @Body() data: CandidateAndJobInfoDto,
+  ): Promise<string> {
+    return this.docsService.generateSkillGap(data);
   }
 }
